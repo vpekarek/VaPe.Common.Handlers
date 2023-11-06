@@ -1,0 +1,38 @@
+resources:
+  repositories:
+    - repository: TemplatesPipeline
+      type: git
+      name: Projects/Templates.Pipeline
+      ref: refs/heads/main
+
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+- group: NuGet
+- name: GitVersion.SemVer
+  value: ''
+- name: isDebug
+  value: false
+- name: isMain
+  value: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+- name: isPR
+  value: $[eq(variables['Build.Reason'], 'PullRequest')]
+- name: deployApp
+  value: false
+
+stages:
+- stage: Validate
+  displayName: 'Validate & publish NuGet packages'
+  jobs:
+    - template: azure-pipeline-dotnet.yml@TemplatesPipeline
+#- stage: Deploy
+#  dependsOn: [ Validate ]
+#  condition: eq(variables.deployApp, true)
+#  jobs:
+#  - template: azure-pipeline-dotnet-deploy.yml@TemplatesPipeline
+#    parameters:
+#      targetEnvironment: DEV

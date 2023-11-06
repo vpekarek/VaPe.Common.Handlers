@@ -1,0 +1,6 @@
+mode: Mainline
+branches:
+  master:
+    regex: main
+ignore:
+  sha: []
